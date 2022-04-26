@@ -13,3 +13,12 @@ The second layer contains a single module, processing, which integrates the firs
 
 The third layer is the user layer, where inputs and parameters are defined. By utilizing functions within the processing.py module, the user can perform specific tasks. An example is provided in the "processing_script_sample.py". 
 
+To use the example script, install the following required packages:
+- skimage
+- numpy
+- scipy
+- matplotlib
+- pandas
+
+Put all the modules in the same directory, and create an Input/ and an Output/ directory, as indicated in the processing_script_sample. 
+Then, simply put the TIRF image in the input directory and run. TIRF image needs to be in grayscale and in tiff format. 
