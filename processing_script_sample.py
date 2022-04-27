@@ -42,6 +42,9 @@ processing.batch_tracing(input_directory='Input/',
 
 # traces are filtered based on proximity to each other, proximity to the edge of the image, whether have defined start
 # or end, and whether two traces reside the same x-y coordinate but at different time points of the movie.
+# note that the filter does not eliminate traces that last only one frame, but these traces should be eventually excluded
+# when constructing the histogram frmo the traces.
+# the output is a database of traces, which can be tallied or manipulated easily in any programs that read csv files. 
 processing.batch_filter_traces('Input/',
                                'Output/',
                                database_file_unique_keyword='traces',
