@@ -36,8 +36,8 @@ def filter_dots_by_intensity_and_background(data_image_file_path: str, associate
 
     return data.filter_dots(dot_dataframe=associated_dot_database,
                             max_blob_r=5,
-                            mean_threshold=background_mean + 2 * background_std,
-                            max_intensity=dot_mean + 3 * dot_std)
+                            mean_threshold=background_mean + 0.1*(dot_mean - background_mean),
+                            max_intensity=dot_mean + 6 * dot_std)
 
 
 def batch_filter_gaussian_fitted_dots(input_directory: str,
@@ -66,12 +66,9 @@ def batch_filter_gaussian_fitted_dots(input_directory: str,
         filtered_database = filter_dots_by_intensity_and_background(data_image_file_path=image_file,
                                                                     associated_dot_database=associated_dot_database)
 
-        # Note that mean_height_percentage_difference is a shortcut for assessing whether the Gaussian peak is at the
-        # center of the dot, but the way  the mean is calculated is not accessible from outside the data.filter_dots()
-        # function. This might be changed in the future, but for now, this works only when the mean is calculated using
-        # a 5x5 window and Gaussian fitted with 11x11 dot. The simple logic behind this filter is that the brightness of
-        # the geometric center of the dot should not deviate much from the height of the 2D Gaussian if the peak of the
-        # 2D Gaussian is at the geometric center.
+        # Note that the parameters below are not accessible from outside the function. I might change this in the
+        # future, but for now, this works only when the mean is calculated using a 5x5 window and Gaussian fitted with
+        # 11x11
         filtered_database = data.filter_dots(
             filtered_database,
             max_gaussian_deviation=max_gaussian_deviation,
@@ -156,13 +153,17 @@ def batch_filter_traces(input_directory: str,
         trace_data = pd.read_csv(trace_database_file_name, index_col=0)
         print('Filtering trace data {}'.format(trace_database_file_name.split(os.sep)[-1]))
 
+        trace_data_spatial_filter = pd.DataFrame()
+        trace_data_temporal_filter = pd.DataFrame()
+        
         if min_spatial_difference > 0:
-            trace_data = data.remove_concurrent_and_overlapping_traces(trace_data, min_spatial_difference)
+            trace_data_spatial_filter = data.remove_concurrent_and_overlapping_traces(trace_data, min_spatial_difference)
 
         if gap_threshold_for_eliminate_co_localized_traces > 0:
-            trace_data = data.remove_traces_with_long_gaps(trace_data, max_spatial_difference=2,
+            trace_data_temporal_filter = data.remove_traces_with_long_gaps(trace_data, max_spatial_difference=5,
                                                            gap_threshold=gap_threshold_for_eliminate_co_localized_traces)
 
+        trace_data = trace_data_spatial_filter.merge(trace_data_temporal_filter, how='inner')
         trace_data = data.filter_trace_by_start_end_and_xy(trace_data, min_x_coor, max_x_coor, min_y_coor, max_y_coor)
         output_file_name = trace_database_file_name.split(os.sep)[-1][:-4]
         trace_data.to_csv('{}{}_cropped.csv'.format(output_directory, output_file_name))
