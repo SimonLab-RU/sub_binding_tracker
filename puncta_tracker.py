@@ -49,7 +49,7 @@ def find_puncta(image_data_array, target_radius, blob_min_radius, blob_threshold
         dot_ids = list(range(current_id, current_id + number_of_dots))
         dot_frames = [current_frame] * number_of_dots
 
-        # now, calculate the mean intensity; the measuring_disc_diameter is set at 5 across the board
+        # now, calculate the mean intensity; the measuring_disc_diameter is set at 9 across the board
         # remember to change mean measuring disc diameter if this is modified
         means = []
         for i in range(number_of_dots):
@@ -121,8 +121,7 @@ def simple_tracker(dot_database: pd.DataFrame, max_frame_gaps, max_spatial_jumps
     # The idea for the simple_tracker is that I will construct a dictionary that maps a dot ID to a trace ID;
     # the dot IDs are keys in the dictionary. On the other hand, once the dictionary contains a specific dot ID,
     # it means that the dot has been processed and has been assigned a trace ID.
-    # max_spatial_jumps is the maximum distance between two dots that are allowed to be linked;
-    # this is measured in pixels
+    # max_special_jumps is the maximum distance between frames that are allowed; this is measured in pixels
 
     last_frame = max(dot_database['frame'])  # find out the last frame that has dots on it
     trace_assignment = {}  # initialize a trace-assignment database, where dot ID is mapped to a trace ID
