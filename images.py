@@ -290,7 +290,8 @@ def measure_mean_at_xy(x, y, source_slice, measuring_disc_diameter):
 
 
 def check_padding_requirement(x, y, source_slice, measuring_disc_diameter):
-    # this function is simplified from the measure_mean_at_xy function.
+    # this function is simplified from the measure_mean_at_xy function. I realize that I use this function quite a lot
+    # so might just write this up
     h, w = source_slice.shape
     measuring_disc_radius = math.floor(measuring_disc_diameter/2)
     padding_required = False
